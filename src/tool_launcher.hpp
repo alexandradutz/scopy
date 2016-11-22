@@ -23,6 +23,8 @@
 #include <QMainWindow>
 #include <QPair>
 #include <QVector>
+#include <QtQml/QJSEngine>
+#include "pg_patterns.hpp"
 
 #include "dmm.hpp"
 #include "filter.hpp"
@@ -33,6 +35,7 @@
 #include "signal_generator.hpp"
 #include "logic_analyzer.hpp"
 #include "pattern_generator.hpp"
+
 
 extern "C" {
 	struct iio_context;
@@ -55,7 +58,7 @@ namespace adiscope {
 	Q_SIGNALS:
 		void calibrationDone(float gain_ch1, float gain_ch2);
 
-	private Q_SLOTS:
+    private Q_SLOTS:
 		void on_btnOscilloscope_clicked();
 		void on_btnSignalGenerator_clicked();
 		void on_btnDMM_clicked();
@@ -74,7 +77,11 @@ namespace adiscope {
 
 		void enableCalibTools(float gain_ch1, float gain_ch2);
 
-	private:
+        void on_testScriptBrowse_PB_clicked();
+
+        void on_runScript_PB_clicked();
+
+    private:
 		Ui::ToolLauncher *ui;
 		QList<QMainWindow *> windows;
 		struct iio_context *ctx;
@@ -90,6 +97,8 @@ namespace adiscope {
 		QWidget *current;
 
 		Filter *filter;
+        QJSEngine qengine;
+        JSConsole console;
 
 		void swapMenu(QWidget *menu);
 		void destroyContext();
@@ -97,6 +106,10 @@ namespace adiscope {
 		void resetStylesheets();
 		void calibrate();
 		void addContext(const QString& hostname);
+        bool handle_result(QJSValue result,QString str="");
+        void find_all_children(QObject* parent, QJSValue property);
+        void expose_object_to_script(QObject* obj, QString property);
+        void remove_object_from_script(QString property);
 
 		static void apply_m2k_fixes(struct iio_context *ctx);
 	};

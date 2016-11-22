@@ -28,7 +28,11 @@
 #include <QDebug>
 #include <QtConcurrentRun>
 #include <QSignalTransition>
+#include <QtQml/QJSEngine>
+#include <QtQml/QQmlEngine>
 
+
+#include <QFileDialog>
 #include <iio.h>
 
 using namespace adiscope;
@@ -80,6 +84,13 @@ ToolLauncher::ToolLauncher(QWidget *parent) :
 	connect(this, SIGNAL(calibrationDone(float, float)),
 			this, SLOT(enableCalibTools(float, float)));
 	connect(ui->btnAdd, SIGNAL(clicked()), this, SLOT(addRemoteContext()));
+
+
+    QJSValue consoleObj =  qengine.newQObject(&console);
+    qengine.globalObject().setProperty("console", consoleObj);
+    QJSValue toollauncherobj = qengine.newQObject(this);
+    qengine.globalObject().setProperty("tool", toollauncherobj);
+    QQmlEngine::setObjectOwnership(/*(QObject*)*/&console, QQmlEngine::CppOwnership);
 }
 
 ToolLauncher::~ToolLauncher()
@@ -349,11 +360,12 @@ void adiscope::ToolLauncher::calibrate()
 void adiscope::ToolLauncher::enableCalibTools(float gain_ch1, float gain_ch2)
 {
 	if (filter->compatible(TOOL_OSCILLOSCOPE)) {
-		oscilloscope = new Oscilloscope(ctx, filter,
+        oscilloscope = new Oscilloscope(ctx, filter,
 				ui->stopOscilloscope,
 				gain_ch1, gain_ch2, this);
 
 		ui->oscilloscope->setEnabled(true);
+        expose_object_to_script(oscilloscope,"osc");
 	}
 
 	if (filter->compatible(TOOL_DMM)) {
@@ -412,4 +424,68 @@ bool adiscope::ToolLauncher::switchContext(QString &uri)
 	QtConcurrent::run(std::bind(&ToolLauncher::calibrate, this));
 
 	return true;
+}
+
+bool ToolLauncher::handle_result(QJSValue result,QString str)
+{
+    if(result.isError())
+    {
+        qDebug()
+                << "Uncaught exception at line"
+                << result.property("lineNumber").toInt()
+                << ":" << result.toString();
+        return -2;
+    }
+    else
+        qDebug()<<str<<" - Success";
+
+}
+
+void ToolLauncher::find_all_children(QObject* parent, QJSValue property)
+{
+
+    if(parent->children().count() == 0){ return;}
+    for(auto child: parent->children())
+    {
+        if(child->objectName()!="")
+        {
+            QJSValue jschild = qengine.newQObject(child);
+            property.setProperty(child->objectName(),jschild);
+            QQmlEngine::setObjectOwnership(child, QQmlEngine::CppOwnership);
+
+            find_all_children(child, property.property(child->objectName()));
+        }
+    }
+}
+
+void ToolLauncher::expose_object_to_script(QObject* obj, QString property)
+{
+    QJSValue toollauncherobj = qengine.newQObject(obj);
+    qengine.globalObject().setProperty(property, toollauncherobj);
+
+    find_all_children(obj,toollauncherobj);
+}
+
+void ToolLauncher::remove_object_from_script(QString property)
+{
+    handle_result(qengine.evaluate("delete "+property));
+}
+
+void adiscope::ToolLauncher::on_testScriptBrowse_PB_clicked()
+{
+    QFileDialog qfd;
+    qfd.setDefaultSuffix("qjs");
+    QString filename = qfd.getOpenFileName(this,tr("Load buffer"),".qjs",tr("Test script - QT JavaScript (*.qjs)"));
+    ui->testScriptFileName_LE->setText(filename);
+}
+
+void adiscope::ToolLauncher::on_runScript_PB_clicked()
+{
+    QString fileName(ui->testScriptFileName_LE->text());
+    qDebug()<<fileName;
+    QFile scriptFile(fileName);
+    scriptFile.open(QIODevice::ReadOnly);
+    QTextStream stream(&scriptFile);
+    QString contents = stream.readAll();
+    handle_result(qengine.evaluate(contents,fileName));
 }

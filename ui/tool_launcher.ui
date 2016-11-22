@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>988</width>
-    <height>806</height>
+    <width>1010</width>
+    <height>848</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -992,6 +992,23 @@ background-image: url(:/menu/play.png);
         </widget>
        </item>
        <item>
+        <widget class="QLineEdit" name="testScriptFileName_LE"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="testScriptBrowse_PB">
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="runScript_PB">
+         <property name="text">
+          <string>Run</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1146,7 +1163,7 @@ font-weight: bold;
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>102</width>
+                  <width>90</width>
                   <height>64</height>
                  </size>
                 </property>

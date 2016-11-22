@@ -1,0 +1,6 @@
+console.log("##############")
+
+console.log(typeof(osc.pushButtonRunStop.click))
+for(property in osc)
+{ console.log(property)}
+osc.pushButtonRunStop.click()
