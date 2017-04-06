@@ -38,6 +38,7 @@
 #include <gnuradio/blocks/nop.h>
 #include <gnuradio/blocks/skiphead.h>
 #include <gnuradio/blocks/vector_sink_s.h>
+#include <gnuradio/blocks/wavfile_source.h>
 #include <gnuradio/iio/device_sink.h>
 #include <gnuradio/iio/math.h>
 
@@ -450,6 +451,11 @@ void SignalGenerator::loadFile()
 	this->ui->label_size->setText(QString("%1 ").arg(
 				info.size() / sizeof(float)) + tr("samples"));
 
+	if (ptr->file.endsWith(".wav", Qt::CaseInsensitive))
+		this->ui->label_format->setText("WAV file");
+	else
+		this->ui->label_format->setText("32-bit float binary data");
+
 	updatePreview();
 }
 
@@ -664,8 +670,13 @@ gr::basic_block_sptr SignalGenerator::getSource(QWidget *obj,
 		if (!ptr->file.isNull()) {
 			auto str = ptr->file.toStdString();
 
-			return blocks::file_source::make(
+			if (ptr->file.endsWith(".wav", Qt::CaseInsensitive)) {
+				return blocks::wavfile_source::make(
+						str.c_str(), true);
+			} else {
+				return blocks::file_source::make(
 					sizeof(float), str.c_str(), true);
+			}
 		}
 		break;
 	case SIGNAL_TYPE_MATH:
