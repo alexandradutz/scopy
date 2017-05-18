@@ -30,6 +30,8 @@
 
 #include "digitalio.hpp"
 
+#define TIMER_TIMEOUT_MS	200
+
 using namespace std;
 using namespace adiscope;
 
@@ -161,7 +163,6 @@ DigitalIO::DigitalIO(struct iio_context *ctx, Filter *filt, QPushButton *runBtn,
 	connect(diom,SIGNAL(locked()),this,SLOT(lockUi()));
 	connect(diom,SIGNAL(unlocked()),this,SLOT(lockUi()));
 	menu->setupUi(ui->rightMenu);
-	menu->lineEdit->setValidator(new QIntValidator(500, 9999, this));
 	ui->pushButton_2->setChecked(true);
 	rightMenuToggle();
 	connect(menu->enableOutputs_PB,SIGNAL(clicked()),this,SLOT(enableOutputs()));
@@ -343,7 +344,7 @@ void adiscope::DigitalIO::lockUi()
 void adiscope::DigitalIO::on_btnRunStop_clicked()
 {
 	if (ui->btnRunStop->isChecked()) {
-		poll->start(menu->lineEdit->text().toInt());
+		poll->start(TIMER_TIMEOUT_MS);
 	} else {
 		poll->stop();
 		menu->enableOutputs_PB->setChecked(false);
