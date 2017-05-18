@@ -38,7 +38,6 @@
 #include "ui_digitalio.h"
 #include "ui_digitalIoElement.h"
 #include "ui_digitalIoChannel.h"
-#include "ui_digitaliomenu.h"
 
 
 extern "C" {
@@ -50,7 +49,6 @@ extern "C" {
 
 namespace Ui {
 class DigitalIO;
-class DigitalIoMenu;
 class dioElement;
 class dioGroup;
 }
@@ -112,7 +110,6 @@ private:
 	struct iio_context *ctx;
 	DigitalIO_API *dio_api;
 	QList<DigitalIoGroup *> groups;
-	Ui::DigitalIoMenu *menu;
 	QTimer *poll;
 	DIOManager *diom;
 
@@ -127,9 +124,7 @@ public:
 	void setOutput(int ch, int out);
 
 public Q_SLOTS:
-	void rightMenuToggle();
 	void updateUi();
-	void enableOutputs();
 	void setDirection();
 	void setOutput();
 	void setSlider(int val);

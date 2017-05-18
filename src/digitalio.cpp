@@ -130,7 +130,6 @@ DigitalIO::DigitalIO(struct iio_context *ctx, Filter *filt, QPushButton *runBtn,
 	ctx(ctx),
 	ui(new Ui::DigitalIO),
 	dio_api(new DigitalIO_API(this)),
-	menu(new Ui::DigitalIoMenu),
 	diom(diom)
 {
 	// UI
@@ -150,12 +149,8 @@ DigitalIO::DigitalIO(struct iio_context *ctx, Filter *filt, QPushButton *runBtn,
 
 	connect(diom,SIGNAL(locked()),this,SLOT(lockUi()));
 	connect(diom,SIGNAL(unlocked()),this,SLOT(lockUi()));
-	menu->setupUi(ui->rightMenu);
-	ui->pushButton_2->setChecked(true);
-	rightMenuToggle();
-	connect(menu->enableOutputs_PB,SIGNAL(clicked()),this,SLOT(enableOutputs()));
+
 	poll = new QTimer(this);
-	connect(ui->pushButton_2,SIGNAL(clicked()),this,SLOT(rightMenuToggle()));
 	connect(poll,SIGNAL(timeout()),this,SLOT(updateUi()));
 
 	dio_api->setObjectName(QString::fromStdString(Filter::tool_name(
@@ -224,11 +219,6 @@ void DigitalIO::updateUi()
 		groups[1]->ui->horizontalSlider->setValue(gpigrp2);
 	}
 }
-
-void DigitalIO::enableOutputs()
-{
-	diom->enableOutput(menu->enableOutputs_PB->isChecked());
-}
 }
 
 
@@ -284,11 +274,6 @@ void adiscope::DigitalIoGroup::on_comboBox_activated(int index)
 	ui->stackedWidget->setCurrentIndex(index);
 }
 
-void adiscope::DigitalIO::rightMenuToggle()
-{
-	ui->rightMenu->toggleMenu(ui->pushButton_2->isChecked());
-}
-
 void adiscope::DigitalIO::lockUi()
 {
 	auto lockmask = diom->getLockMask();
@@ -326,9 +311,9 @@ void adiscope::DigitalIO::on_btnRunStop_clicked()
 {
 	if (ui->btnRunStop->isChecked()) {
 		poll->start(TIMER_TIMEOUT_MS);
+		diom->enableOutput(true);
 	} else {
 		poll->stop();
-		menu->enableOutputs_PB->setChecked(false);
 		diom->enableOutput(false);
 	}
 }
