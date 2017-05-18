@@ -81,10 +81,8 @@ DigitalIoGroup::~DigitalIoGroup()
 
 void DigitalIO::setDirection(int ch, int direction)
 {
-	if (!offline_mode) {
-		diom->setDirection(ch,direction);
-		updateUi();
-	}
+	diom->setDirection(ch,direction);
+	updateUi();
 }
 
 void DigitalIO::setDirection()
@@ -96,10 +94,8 @@ void DigitalIO::setDirection()
 
 void DigitalIO::setOutput(int ch, int out)
 {
-	if (!offline_mode) {
-		diom->setOutRaw(ch,out);
-		//updateUi();
-	}
+	diom->setOutRaw(ch,out);
+	//updateUi();
 }
 
 void DigitalIO::setSlider(int val)
@@ -129,22 +125,14 @@ void DigitalIO::setOutput()
 
 DigitalIO::DigitalIO(struct iio_context *ctx, Filter *filt, QPushButton *runBtn,
                      DIOManager *diom, QJSEngine *engine,
-                     QWidget *parent, bool offline_mode) :
+                     QWidget *parent) :
 	QWidget(parent),
 	ctx(ctx),
 	ui(new Ui::DigitalIO),
-	offline_mode(offline_mode),
 	dio_api(new DigitalIO_API(this)),
 	menu(new Ui::DigitalIoMenu),
 	diom(diom)
 {
-	// IIO
-	if (!offline_mode) {
-		/*		dev = iio_context_find_device(ctx, "m2k-logic-analyzer-tx");
-				channel_manager_dev = iio_context_find_device(ctx, "m2k-logic-analyzer");
-				this->no_channels = iio_device_get_channels_count(channel_manager_dev);*/
-	}
-
 	// UI
 	ui->setupUi(this);
 
@@ -179,9 +167,6 @@ DigitalIO::DigitalIO(struct iio_context *ctx, Filter *filt, QPushButton *runBtn,
 
 DigitalIO::~DigitalIO()
 {
-	if (!offline_mode) {
-	}
-
 	dio_api->save();
 	delete dio_api;
 	delete ui;
@@ -207,46 +192,42 @@ QPair<QWidget *,Ui::dioChannel *> *DigitalIO::findIndividualUi(int ch)
 
 void DigitalIO::updateUi()
 {
-	if (!offline_mode) {
-		auto gpi = diom->getGpi();
-		auto gpigrp1 = gpi & 0xff;
-		auto gpigrp2 = (gpi & 0xff00) >> 8;
+	auto gpi = diom->getGpi();
+	auto gpigrp1 = gpi & 0xff;
+	auto gpigrp2 = (gpi & 0xff00) >> 8;
 
-		for (auto i=0; i<16; i++) {
-			Ui::dioChannel *chui = findIndividualUi(i)->second;
-			auto chk = gpi&0x01;
-			gpi >>= 1;
+	for (auto i=0; i<16; i++) {
+		Ui::dioChannel *chui = findIndividualUi(i)->second;
+		auto chk = gpi&0x01;
+		gpi >>= 1;
 
-			chui->input->setChecked(chk);
-			auto isLocked = diom->getLockMask() & 1<<i;
-			auto isOutput = diom->getDirection(i);
+		chui->input->setChecked(chk);
+		auto isLocked = diom->getLockMask() & 1<<i;
+		auto isOutput = diom->getDirection(i);
 
-			if (!isLocked && isOutput && diom->getOutputEnabled())
-				if (chk != diom->getOutRaw(i)) {
-					setDynamicProperty(chui->input,"short",true);
-				} else {
-					setDynamicProperty(chui->input,"short",false);
-				}
-			else {
+		if (!isLocked && isOutput && diom->getOutputEnabled())
+			if (chk != diom->getOutRaw(i)) {
+				setDynamicProperty(chui->input,"short",true);
+			} else {
 				setDynamicProperty(chui->input,"short",false);
 			}
+		else {
+			setDynamicProperty(chui->input,"short",false);
 		}
+	}
 
-		if (groups[0]->ui->inout->isChecked()) {
-			groups[0]->ui->horizontalSlider->setValue(gpigrp1);
-		}
+	if (groups[0]->ui->inout->isChecked()) {
+		groups[0]->ui->horizontalSlider->setValue(gpigrp1);
+	}
 
-		if (groups[1]->ui->inout->isChecked()) {
-			groups[1]->ui->horizontalSlider->setValue(gpigrp2);
-		}
+	if (groups[1]->ui->inout->isChecked()) {
+		groups[1]->ui->horizontalSlider->setValue(gpigrp2);
 	}
 }
 
 void DigitalIO::enableOutputs()
 {
-	if (!offline_mode) {
-		diom->enableOutput(menu->enableOutputs_PB->isChecked());
-	}
+	diom->enableOutput(menu->enableOutputs_PB->isChecked());
 }
 }
 
