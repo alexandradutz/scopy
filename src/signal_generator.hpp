@@ -133,6 +133,7 @@ namespace adiscope {
 				unsigned long sample_rate, bool perfect = false);
 		unsigned long get_best_sample_rate(
 				const struct iio_device *dev);
+		double get_best_ratio(double ratio, double max, double *fract);
 		int set_sample_rate(const struct iio_device *dev,
 				unsigned long sample_rate);
 		bool use_oversampling(const struct iio_device *dev);
