@@ -20,6 +20,8 @@ public:
 	Ui::MeasurementsPanel* getPanelGUI();
 	QWidget *getPanel();
 
+	void statisticsEnabled(bool on);
+	QWidget* getStatistics();
 private:
 	Ui::MeasurementsPanel *measurements_panel;
 	QWidget *panel;

@@ -16,6 +16,8 @@ MeasurePanelController::MeasurePanelController(QWidget *parent):
 	measurements_panel->setupUi(panel);
 	panel->hide();
 
+	measurements_panel->statistics->setVisible(false);
+
 	QSizePolicy sp_retainBtnLeft = measurements_panel->scrollLeftBtn->sizePolicy();
 	sp_retainBtnLeft.setRetainSizeWhenHidden(true);
 	measurements_panel->scrollLeftBtn->setSizePolicy(sp_retainBtnLeft);
@@ -93,4 +95,15 @@ Ui::MeasurementsPanel* MeasurePanelController::getPanelGUI()
 QWidget* MeasurePanelController::getPanel()
 {
 	return panel;
+}
+
+void MeasurePanelController::statisticsEnabled(bool on)
+{
+	measurements_panel->measurements->setVisible(!on);
+	measurements_panel->statistics->setVisible(on);
+}
+
+QWidget *MeasurePanelController::getStatistics()
+{
+	return measurements_panel->statistics;
 }
