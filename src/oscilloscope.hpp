@@ -54,6 +54,7 @@
 #include "osc_adc.h"
 #include "tool.hpp"
 #include "osc_export_settings.h"
+#include "osc_measure_panel_controller.h"
 
 class QJSEngine;
 class SymmetricBufferMode;
@@ -197,6 +198,7 @@ namespace adiscope {
 		QWidget *statisticsPanel;
 		AnalogBufferPreviewer *buffer_previewer;
 		ExportSettings *exportSettings;
+		MeasurePanelController *MPController;
 
 		QMap<int, bool> exportConfig;
 

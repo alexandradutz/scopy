@@ -1984,10 +1984,10 @@ void Oscilloscope::fillCursorReadouts(const struct cursorReadoutsText& data)
 
 void Oscilloscope::measure_panel_init()
 {
-	measurePanel = new QWidget(this);
-	measure_panel_ui = new Ui::MeasurementsPanel();
-	measure_panel_ui->setupUi(measurePanel);
-	measurePanel->hide();
+	MPController = new MeasurePanelController(this);
+
+	measure_panel_ui = MPController->getPanelGUI();
+	measurePanel = MPController->getPanel();
 
 	connect(&plot, SIGNAL(measurementsAvailable()),
 		SLOT(onMeasuremetsAvailable()));
@@ -2030,8 +2030,6 @@ void Oscilloscope::measure_panel_init()
 	cursor_readouts_ui->cursorV2->setMinimumWidth(minWidth);
 	cursor_readouts_ui->voltageDelta->setMinimumWidth(minWidth);
 	delete label;
-
-	measure_panel_ui->scrollArea->setMinimumHeight(label->height() * 4);
 
 	QHBoxLayout *hLayout = static_cast<QHBoxLayout *>(
 		measure_panel_ui->cursorReadouts->layout());
