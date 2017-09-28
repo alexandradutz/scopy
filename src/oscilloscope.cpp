@@ -52,7 +52,6 @@
 #include "ui_osc_general_settings.h"
 #include "ui_measure_panel.h"
 #include "ui_measure_settings.h"
-#include "ui_statistics_panel.h"
 #include "ui_cursor_readouts.h"
 #include "ui_oscilloscope.h"
 #include "ui_trigger_settings.h"
@@ -284,7 +283,6 @@ Oscilloscope::Oscilloscope(struct iio_context *ctx, Filter *filt,
 	ui->gridLayoutPlot->addWidget(plot.rightHandlesArea(), 1, 2, 3, 1);
 	ui->gridLayoutPlot->addWidget(plot.bottomHandlesArea(), 3, 0, 1, 3);
 	ui->gridLayoutPlot->addItem(plotSpacer, 4, 0, 1, 3);
-	ui->gridLayoutPlot->addWidget(statisticsPanel, 5, 1, 1, 1);
 
 	/* Default plot settings */
 	plot.setSampleRate(adc->sampleRate(), 1, "");
@@ -1272,7 +1270,7 @@ void adiscope::Oscilloscope::on_boxMeasure_toggled(bool on)
 	}
 
 	measurePanel->setVisible(on);
-	statisticsPanel->setVisible(on && statistics_enabled);
+	MPController->statisticsEnabled(on && statistics_enabled);
 
 	// Set the visibility of the cursor readouts owned by the plot
 	if (ui->boxCursors->isChecked())
@@ -2029,6 +2027,9 @@ void Oscilloscope::measure_panel_init()
 	cursor_readouts_ui->cursorV1->setMinimumWidth(minWidth);
 	cursor_readouts_ui->cursorV2->setMinimumWidth(minWidth);
 	cursor_readouts_ui->voltageDelta->setMinimumWidth(minWidth);
+
+	//measure_panel_ui->scrollArea->setMinimumWidth(minWidth * 3.5);
+
 	delete label;
 
 	QHBoxLayout *hLayout = static_cast<QHBoxLayout *>(
@@ -2042,20 +2043,15 @@ void Oscilloscope::measure_panel_init()
 
 void Oscilloscope::statistics_panel_init()
 {
-	statisticsPanel = new QWidget(this);
-	statistics_panel_ui = new Ui::StatisticsPanel();
-	statistics_panel_ui->setupUi(statisticsPanel);
-	QHBoxLayout *hLayout = new QHBoxLayout(statistics_panel_ui->statistics);
+	QHBoxLayout *hLayout = new QHBoxLayout(MPController->getStatistics());
 	hLayout->setContentsMargins(0, 0, 0, 0);
 	hLayout->setSpacing(25);
 
 	// Make sure the scroll area knows beforehand the height of the content
 	// that will be added to the statistics widget
 	StatisticWidget *dummyStat = new StatisticWidget();
-	statistics_panel_ui->statistics->setMinimumHeight(dummyStat->height());
+	MPController->getStatistics()->setMinimumHeight(dummyStat->height());
 	delete dummyStat;
-
-	statisticsPanel->hide();
 }
 
 void Oscilloscope::statisticsUpdateValues()
@@ -2076,8 +2072,8 @@ void Oscilloscope::statisticsReset()
 
 void Oscilloscope::statisticsUpdateGui()
 {
-	QList<StatisticWidget *>statistics = statistics_panel_ui->
-		statistics->findChildren<StatisticWidget *>(
+	QList<StatisticWidget *>statistics = MPController->
+			getStatistics()->findChildren<StatisticWidget *>(
 			QString("Statistic"), Qt::FindDirectChildrenOnly);
 	for (int i = 0; i < statistics.size(); i++)
 		statistics[i]->updateStatistics(statistics_data[i].second);
@@ -2085,8 +2081,8 @@ void Oscilloscope::statisticsUpdateGui()
 
 void Oscilloscope::statisticsUpdateGuiTitleColor()
 {
-	QList<StatisticWidget *>statistics = statistics_panel_ui->
-		statistics->findChildren<StatisticWidget *>(
+	QList<StatisticWidget *>statistics = MPController->getStatistics()
+			->findChildren<StatisticWidget *>(
 			QString("Statistic"), Qt::FindDirectChildrenOnly);
 	for (int i = 0; i < statistics.size(); i++)
 		statistics[i]->setTitleColor(plot.getLineColor(
@@ -2095,8 +2091,8 @@ void Oscilloscope::statisticsUpdateGuiTitleColor()
 
 void Oscilloscope::statisticsUpdateGuiPosIndex()
 {
-	QList<StatisticWidget *>statistics = statistics_panel_ui->
-		statistics->findChildren<StatisticWidget *>(
+	QList<StatisticWidget *>statistics = MPController->getStatistics()
+		->findChildren<StatisticWidget *>(
 			QString("Statistic"), Qt::FindDirectChildrenOnly);
 	for (int i = 0; i < statistics.size(); i++)
 		statistics[i]->setPositionIndex(i + 1);
@@ -2112,7 +2108,7 @@ void Oscilloscope::onStatisticActivated(int id, int chnIdx)
 		Statistic>(pmd, Statistic()));
 
 	/* Add a widget for the new statistic */
-	QWidget *statisticContainer = statistics_panel_ui->statistics;
+	QWidget *statisticContainer = MPController->getStatistics();
 	QHBoxLayout *hLayout = static_cast<QHBoxLayout *>
 		(statisticContainer->layout());
 
@@ -2142,7 +2138,7 @@ void Oscilloscope::onStatisticDeactivated(int id, int chnIdx)
 	}
 
 	/* remove the widget corresponding to the statistic we deleted */
-	QList<StatisticWidget *>statistics = statistics_panel_ui->statistics->
+	QList<StatisticWidget *>statistics = MPController->getStatistics()->
 		findChildren<StatisticWidget *>(QString("Statistic"),
 		Qt::FindDirectChildrenOnly);
 
@@ -2154,10 +2150,10 @@ void Oscilloscope::onStatisticDeactivated(int id, int chnIdx)
 	if (stat_it != statistics.end()) {
 		QWidget *w = static_cast<QWidget *> (*stat_it);
 		if (statistics_enabled) // Avoid flickers when panel is visible
-			statisticsPanel->hide(); // Avoid flickers
-		statistics_panel_ui->statistics->layout()->removeWidget(w);
+			MPController->getStatistics()->hide(); // Avoid flickers
+		MPController->getStatistics()->layout()->removeWidget(w);
 		if (statistics_enabled) // Avoid flickers when panel is visible
-			statisticsPanel->show();
+			MPController->getStatistics()->show();
 		delete w;
 
 		statisticsUpdateGuiPosIndex();
@@ -2169,11 +2165,11 @@ void Oscilloscope::onStatisticSelectionListChanged()
 	// Clear all statistics in list
 	statistics_data.clear();
 
-	QList<StatisticWidget *>statistics = statistics_panel_ui->statistics->
+	QList<StatisticWidget *>statistics = MPController->getStatistics()->
 		findChildren<StatisticWidget *>(QString("Statistic"),
 		Qt::FindDirectChildrenOnly);
 	for (int i = 0; i < statistics.size(); i++) {
-		statistics_panel_ui->statistics->layout()->removeWidget(
+		MPController->getStatistics()->layout()->removeWidget(
 			statistics[i]);
 		delete statistics[i];
 	}
@@ -2189,7 +2185,7 @@ void Oscilloscope::onStatisticSelectionListChanged()
 void Oscilloscope::onStatisticsEnabled(bool on)
 {
 	statistics_enabled = on;
-	statisticsPanel->setVisible(on);
+	MPController->statisticsEnabled(on);
 
 	if (!on)
 		statisticsReset();

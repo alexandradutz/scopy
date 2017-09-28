@@ -64,7 +64,6 @@ namespace Ui {
 	class OscGeneralSettings;
 	class ChannelSettings;
 	class MeasurementsPanel;
-	class StatisticsPanel;
 	class CursorReadouts;
 	class CursorsSettings;
 }
@@ -193,7 +192,6 @@ namespace adiscope {
 		QWidget *measurePanel;
 		Ui::CursorReadouts *cursor_readouts_ui;
 		QWidget *cursorReadouts;
-		Ui::StatisticsPanel *statistics_panel_ui;
 		Ui::CursorsSettings *cr_ui;
 		QWidget *statisticsPanel;
 		AnalogBufferPreviewer *buffer_previewer;
