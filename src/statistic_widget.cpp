@@ -235,3 +235,8 @@ void StatisticWidget::updateStatistics(const Statistic& data)
 	m_ui->label_min->setText(min_text);
 	m_ui->label_max->setText(max_text);
 }
+
+void StatisticWidget::setLineVisible(bool visible)
+{
+	m_ui->line->setVisible(visible);
+}

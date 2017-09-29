@@ -2098,6 +2098,19 @@ void Oscilloscope::statisticsUpdateGuiPosIndex()
 		statistics[i]->setPositionIndex(i + 1);
 }
 
+void Oscilloscope::statisticsUpdateGuiLine()
+{
+	QList<StatisticWidget *>statistics = MPController->getStatistics()
+		->findChildren<StatisticWidget *>(
+			QString("Statistic"), Qt::FindDirectChildrenOnly);
+	for (int i = 0; i < statistics.size(); i++){
+		if (i != statistics.size() - 1)
+			statistics[i]->setLineVisible(true);
+		else
+			statistics[i]->setLineVisible(false);
+	}
+}
+
 void Oscilloscope::onStatisticActivated(int id, int chnIdx)
 {
 	std::shared_ptr<MeasurementData> pmd = plot.measurement(id, chnIdx);
@@ -2118,6 +2131,8 @@ void Oscilloscope::onStatisticActivated(int id, int chnIdx)
 	statistic->setPositionIndex(statistics_data.size());
 	statistic->updateStatistics(statistics_data.last().second);
 	hLayout->addWidget(statistic);
+
+	statisticsUpdateGuiLine();
 }
 
 void Oscilloscope::onStatisticDeactivated(int id, int chnIdx)
@@ -2158,6 +2173,8 @@ void Oscilloscope::onStatisticDeactivated(int id, int chnIdx)
 
 		statisticsUpdateGuiPosIndex();
 	}
+
+	statisticsUpdateGuiLine();
 }
 
 void Oscilloscope::onStatisticSelectionListChanged()

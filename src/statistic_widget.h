@@ -48,6 +48,8 @@ public:
 	void initForMeasurement(const MeasurementData & data);
 	void updateStatistics(const Statistic & data);
 
+	void setLineVisible(bool visible);
+
 private:
 	Ui::Statistic *m_ui;
 	QString m_title;

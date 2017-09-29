@@ -295,6 +295,7 @@ namespace adiscope {
 		void pause(bool paused);
 		void cursor_panel_init();
 		void setFFT_params(bool force=false);
+		void statisticsUpdateGuiLine();
 	};
 
 	class Oscilloscope_API : public ApiObject
