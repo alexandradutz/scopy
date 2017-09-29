@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>402</width>
-    <height>106</height>
+    <width>407</width>
+    <height>105</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -50,6 +50,38 @@
    <property name="spacing">
     <number>0</number>
    </property>
+   <item row="0" column="1">
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>15</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="5" rowspan="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Preferred</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="0" column="4">
     <spacer name="verticalSpacer_4">
      <property name="orientation">
@@ -82,46 +114,105 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="5" rowspan="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Preferred</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="1" colspan="4">
-    <widget class="Line" name="line_2">
+   <item row="1" column="4">
+    <widget class="QPushButton" name="scrollRightBtn">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="maximumSize">
+     <property name="minimumSize">
       <size>
-       <width>16777215</width>
-       <height>1</height>
+       <width>15</width>
+       <height>0</height>
       </size>
      </property>
-     <property name="styleSheet">
-      <string notr="true">border: 1px solid rgb(82, 82, 89);</string>
+     <property name="maximumSize">
+      <size>
+       <width>20</width>
+       <height>200</height>
+      </size>
      </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QWidget {
+  border-radius: 3px;
+  border: 1px solid #4A64FF;
+  background-color: #4A64FF;
+  font-weight: bold;
+  font-size:   16px;
+}
+QPushButton::hover{
+	color: white;
+}
+
+QPushButton:pressed {
+  background-color: #2a44df;
+}
+
+
+</string>
+     </property>
+     <property name="text">
+      <string>&gt;</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <spacer name="verticalSpacer_3">
+   <item row="1" column="1">
+    <widget class="QPushButton" name="scrollLeftBtn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>15</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>20</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QWidget {
+  border-radius: 3px;
+  border: 1px solid #4A64FF;
+  background-color: #4A64FF;
+  font-weight: bold;
+  font-size:   16px;
+}
+QPushButton::hover{
+	color: white;
+}
+
+QPushButton:pressed {
+  background-color: #2a44df;
+}
+
+
+</string>
+     </property>
+     <property name="text">
+      <string>&lt;</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <spacer name="verticalSpacerTop">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -202,7 +293,7 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>186</width>
+        <width>183</width>
         <height>90</height>
        </rect>
       </property>
@@ -379,98 +470,25 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
      </widget>
     </widget>
    </item>
-   <item row="0" column="2">
-    <spacer name="verticalSpacerTop">
+   <item row="2" column="1" colspan="4">
+    <widget class="Line" name="line_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>1</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: 1px solid rgb(82, 82, 89);</string>
+     </property>
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>0</width>
-       <height>15</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="scrollLeftBtn">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>15</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>15</width>
-       <height>200</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QWidget {
-  border-radius: 1px;
-  border: 1px solid gray;
-  background-color: none;
-}
-QPushButton::hover{
-	background-color: rgba(255, 255,  255, 30);
-}</string>
-     </property>
-     <property name="text">
-      <string>&lt;</string>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="4">
-    <widget class="QPushButton" name="scrollRightBtn">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>15</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>15</width>
-       <height>200</height>
-      </size>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QWidget {
-  border-radius: 1px;
-  border: 1px solid gray;
-  background-color: none;
-}
-QPushButton::hover{
-	background-color: rgba(255, 255,  255, 30);
-}</string>
-     </property>
-     <property name="text">
-      <string> &gt;</string>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
