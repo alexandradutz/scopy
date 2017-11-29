@@ -38,6 +38,14 @@ script:
   # Generate AppImage
   #/usr/local/bin/scopy
   - cd ${TRAVIS_BUILD_DIR}/build
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then /usr/local/opt/qt/bin/macdeployqt Scopy.app -always-overwrite -verbose=2; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python /tmp/macdeployqtfix.py ./pixelpulse2.app/Contents/MacOS/pixelpulse2 /usr/local/Cellar/qt/5.9.3/; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then /usr/local/opt/qt/bin/macdeployqt Scopy.app -dmg -no-plugins; fi 
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl --upload-file Scopy.dmg https://transfer.sh/scopy.dmg; fi
+  
+  - echo "==========================================================================================================="
+  - cd ${TRAVIS_BUILD_DIR}/build
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install checkinstall; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo checkinstall --pkgname=app --pkgversion="1" --pkgrelease="1" --backup=no --fstrans=no --default --deldoc; fi 
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd appdir; fi
