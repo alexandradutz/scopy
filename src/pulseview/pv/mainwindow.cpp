@@ -63,6 +63,7 @@
 
 #include "../../filter.hpp"
 
+#include <iostream>
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdarg.h>

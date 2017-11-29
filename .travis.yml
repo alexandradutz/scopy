@@ -1,0 +1,72 @@
+language: cpp
+sudo: required
+
+cache:
+  ccache: true
+  directories:
+    - .ccache
+    - ${TRAVIS_BUILD_DIR}/deps
+    
+python:
+  - "3.5"
+  
+matrix:
+  fast_finish: true
+  include:
+    - compiler: clang
+      os: osx
+      osx_image: xcode8.3
+      env: LDIST=-osx_10.12
+    - compiler: "gcc"
+      os: linux
+      dist: trusty
+      env: LDIST=-trusty
+
+before_install:
+  #- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; pyenv global system 3.5; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./CI/travis/before_install_darwin.sh ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./CI/travis/before_install_linux.sh ; fi
+
+  - mkdir -p ${TRAVIS_BUILD_DIR}/build
+  - ls -la ${TRAVIS_BUILD_DIR}
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir -p ${TRAVIS_BUILD_DIR}/build_tar ; fi
+
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ${TRAVIS_BUILD_DIR}/CI/travis/make_linux.sh ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ${TRAVIS_BUILD_DIR}/CI/travis/make_darwin.sh; fi
+  
+  # Generate AppImage
+  #/usr/local/bin/scopy
+  - cd ${TRAVIS_BUILD_DIR}/build
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install checkinstall; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo checkinstall --pkgname=app --pkgversion="1" --pkgrelease="1" --backup=no --fstrans=no --default --deldoc; fi 
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd appdir; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then dpkg -x ../app_1-1_amd64.deb . ; find .; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cp ./usr/share/icons/hicolor/apps/scalable/scopy.svg ./usr/bin; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cp ./usr/share/icons/hicolor/apps/scalable/scopy.svg .; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cp ./usr/share/applications/scopy.desktop .; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls ./usr/bin/; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sed -i "s/^Icon=.*$/Icon=scopy/g" scopy.desktop; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd ..; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then chmod a+x linuxdeployqt*.AppImage; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export LD_LIBRARY_PATH=/opt/qt59/lib/:/opt/qt59/plugins/:/usr/local/lib/:/usr/lib/:/lib/:/lib/x86_64-linux-gnu/:/lib64/:/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PATH=/opt/qt59/bin/:$PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then qmake -v; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ldd appdir/usr/bin/scopy; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./linuxdeployqt*.AppImage ./appdir/usr/bin/scopy -bundle-non-qt-libs -verbose=2; fi
+  #- ls /home/travis/build/alexandradutz/scopy/build/appdir/usr
+  #- ls /home/travis/build/alexandradutz/scopy/build/appdir/usr/bin
+  #- ls /home/travis/build/alexandradutz/scopy/build/appdir/usr/lib
+  #- cat /home/travis/build/alexandradutz/scopy/build/appdir/usr/bin/qt.conf
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./linuxdeployqt*.AppImage ./appdir/usr/bin/scopy -appimage; fi
+  - echo "==========================================================================================================="
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ldd ./appdir/usr/bin/scopy; fi
+  - echo "==========================================================================================================="
+  #- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd appdir && find . | grep python; fi
+  #- echo "==================================================================="
+  #- echo "==================================================================="
+  #- ls
+  #- echo "==================================================================="
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then curl --upload-file ./Scopy-x86_64.AppImage https://transfer.sh/scopy-git.v0.9-x86_64.AppImage; fi
