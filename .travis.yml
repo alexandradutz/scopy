@@ -40,7 +40,7 @@ script:
   - cd ${TRAVIS_BUILD_DIR}/build
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then /usr/local/opt/qt/bin/macdeployqt Scopy.app -always-overwrite -verbose=2; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python /tmp/macdeployqtfix.py ./pixelpulse2.app/Contents/MacOS/pixelpulse2 /usr/local/Cellar/qt/5.9.3/; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python /tmp/macdeployqtfix.py ./Scopy.app/Contents/MacOS/Scopy /usr/local/opt/qt/; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then /usr/local/opt/qt/bin/macdeployqt Scopy.app -dmg -no-plugins; fi 
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl --upload-file Scopy.dmg https://transfer.sh/scopy.dmg; fi
   
