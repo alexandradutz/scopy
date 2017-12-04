@@ -50,7 +50,6 @@ fi
 sudo make install
 
 cd ${WORKDIR}
-rm -rf gnuradio
 if [ ! -d gnuradio ]; then
   git clone https://github.com/gnuradio/gnuradio
   cd gnuradio
@@ -134,6 +133,7 @@ sudo make install
 locate libqwtpolar.dylib
 
 cd ${WORKDIR}
+rm latest_libiio${LDIST}.pkg*
 wget http://swdownloads.analog.com/cse/travis_builds/latest_libiio${LDIST}.pkg
 sudo installer -pkg latest_libiio${LDIST}.pkg -target /
 
