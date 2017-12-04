@@ -50,6 +50,7 @@ fi
 sudo make install
 
 cd ${WORKDIR}
+rm -rf gnuradio
 if [ ! -d gnuradio ]; then
   git clone https://github.com/gnuradio/gnuradio
   cd gnuradio
