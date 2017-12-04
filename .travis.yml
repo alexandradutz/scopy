@@ -40,7 +40,7 @@ script:
   - cd ${TRAVIS_BUILD_DIR}/build
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then /usr/local/opt/qt/bin/macdeployqt Scopy.app -always-overwrite -verbose=2; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo cp -R /usr/local/opt/python3/Frameworks/Python.framework ./Scopy.app/Contents/Frameworks/; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo cp -R /usr/local/opt/python3/Frameworks/Python.framework/Versions/3.6/Python ./Scopy.app/Contents/Frameworks/; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo cp -R /Library/Frameworks/iio.framework ./Scopy.app/Contents/Frameworks/; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo cp -R /Library/Frameworks/ad9361.framework ./Scopy.app/Contents/Frameworks/; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo cp -R /usr/local/lib/libqwtpolar.1.dylib ./Scopy.app/Contents/Frameworks/; fi
