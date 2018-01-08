@@ -13,11 +13,11 @@ source /opt/qt59/bin/qt59-env.sh && qmllint client/qml/*.qml
 #qmake -set "QT_INSTALL_PREFIX" /opt/qt59
 cd ${WORKDIR}
 
-#sudo mv /usr/bin/python3 /usr/bin/python3-old
-#sudo ln -s /usr/bin/python3.5 /usr/bin/python3
-#sudo ln -s /usr/bin/python3.5m /usr/bin/python3m
-#sudo ln -s /usr/bin/python3.5m-config /usr/bin/python3m-config
-#sudo sed -i "s/4/5/g" /usr/lib/x86_64-linux-gnu/pkgconfig/python3.pc
+sudo mv /usr/bin/python3 /usr/bin/python3-old
+sudo ln -s /usr/bin/python3.6 /usr/bin/python3
+sudo ln -s /usr/bin/python3.6m /usr/bin/python3m
+sudo ln -s /usr/bin/python3.6m-config /usr/bin/python3m-config
+sudo sed -i "s/4/6/g" /usr/lib/x86_64-linux-gnu/pkgconfig/python3.pc
 which python
 which python3
 python3 --version
