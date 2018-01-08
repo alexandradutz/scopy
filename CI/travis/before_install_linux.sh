@@ -1,6 +1,7 @@
 #!/bin/sh
 
 #sudo add-apt-repository --yes ppa:fkrull/deadsnakes
+sudo add-apt-repository ppa:jonathonf/python-3.6
 sudo add-apt-repository --yes ppa:beineri/opt-qt592-trusty
 sudo apt-get -qq update
 sudo apt-get install -y git cmake libzip-dev libusb-1.0-0-dev autoconf libtool libxml2 libxml2-dev python3.6 python-dev python3.6-dev libfftw3-dev libffi-dev libmount-dev libpcre3-dev libglib2.0-dev libsigc++-2.0-dev libglibmm-2.4-dev doxygen libglu1-mesa-dev curl flex bison
